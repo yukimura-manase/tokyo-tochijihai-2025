@@ -64,7 +64,7 @@ export const MapFilter = () => {
   const isAllSelected = filterOptions.every((option) => settings[option.type]);
 
   return (
-    <div className="absolute top-4 left-4 z-[1000] bg-white rounded-lg shadow-lg p-4 max-w-xs">
+    <div className="absolute top-4 left-4 z-[1001] bg-white rounded-lg shadow-lg p-4 max-w-xs">
       <h3 className="font-bold text-sm mb-3">表示する施設</h3>
 
       {/* 全選択/全解除ボタン */}

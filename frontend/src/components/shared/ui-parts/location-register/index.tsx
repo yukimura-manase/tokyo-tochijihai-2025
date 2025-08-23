@@ -154,7 +154,7 @@ export const LocationRegister = () => {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <button
-          className="absolute top-20 right-4 z-[1000] bg-white rounded-lg shadow-lg p-3 hover:bg-gray-100 transition-colors"
+          className="absolute top-20 right-4 z-[1001] bg-white rounded-lg shadow-lg p-3 hover:bg-gray-100 transition-colors"
           aria-label="地点を登録"
         >
           <svg
