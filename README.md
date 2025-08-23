@@ -1,4 +1,8 @@
-# AI Project Template Ver. Docker
+# 『東京都 災害避難 Guide』
+
+- 都知事杯 2025 提出作品
+
+- チーム「ぴゅぴゅまる 🐱」の作品
 
 ## ディレクトリ構造
 
