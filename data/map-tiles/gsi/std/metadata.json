@@ -1,0 +1,17 @@
+{
+  "source": "国土地理院 標準地図",
+  "downloadedAt": "2025-08-23T03:48:12.581Z",
+  "totalTiles": 6016,
+  "successfulTiles": 6016,
+  "failedTiles": 0,
+  "boundingBox": {
+    "north": 35.9,
+    "south": 35.5,
+    "east": 139.95,
+    "west": 138.9
+  },
+  "zoomLevels": {
+    "min": 10,
+    "max": 15
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "name": "map-downloader",
+  "version": "1.0.0",
+  "description": "Tokyo area map tiles downloader for disaster evacuation guide",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "download:osm": "npm run build && node dist/osm-tiles.js",
+    "download:gsi": "npm run build && node dist/gsi-tiles.js",
+    "download:all": "npm run build && node --max-old-space-size=4096 dist/index.js download-all --area tokyo_all",
+    "download:all-23ku": "npm run build && node dist/index.js download-all --area tokyo_23ku",
+    "download:all-tama": "npm run build && node dist/index.js download-all --area tokyo_tama",
+    "download:all-bigmem": "npm run build && node --max-old-space-size=8192 dist/index.js download-all --area tokyo_all",
+    "quick-start": "npm run build && node dist/index.js quick-start",
+    "info": "npm run build && node dist/index.js info",
+    "dev:osm": "ts-node src/osm-tiles.ts",
+    "dev:gsi": "ts-node src/gsi-tiles.ts",
+    "dev": "ts-node src/index.ts"
+  },
+  "keywords": [
+    "map",
+    "tiles",
+    "openstreetmap",
+    "gsi",
+    "tokyo"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.7.7",
+    "cli-progress": "^3.12.0",
+    "commander": "^12.1.0",
+    "fs-extra": "^11.2.0",
+    "p-limit": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/cli-progress": "^3.11.6",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^22.13.14",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
+}
