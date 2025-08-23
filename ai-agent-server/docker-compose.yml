@@ -10,14 +10,38 @@ services:
       - ollama-data:/root/.ollama
     environment:
       - OLLAMA_HOST=0.0.0.0
+    networks:
+      - ollama-network
+
+  fastapi:
+    build: ./app
+    container_name: fastapi-ollama
+    ports:
+      - "8000:8000"
+
+    volumes:
+      - ../dataset:/app/dataset:ro
+      - ./chroma_evac:/app/chroma_evac
+      - ./chroma_pdf:/app/chroma_pdf
+    environment:
+      - PYTHONPATH=/app
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - EVAC_CSV_PATH=/app/dataset/001_避難所位置情報/130001_evacuation_area.csv
+      - EVAC_PERSIST_DIR=/app/chroma_evac
+      - PDF_PATH=/app/dataset/003_防災計画/2023_1.pdf
+      - PDF_PERSIST_DIR=/app/chroma_pdf
+      - PDF_CHUNK_SIZE=1000
+      - PDF_CHUNK_OVERLAP=200
+      - USE_OPENAI=false
+      # Uncomment and set if using OpenAI
+      # - OPENAI_API_KEY=your-api-key-here
     restart: unless-stopped
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
+    networks:
+      - ollama-network
+
+networks:
+  ollama-network:
+    driver: bridge
 
 volumes:
   ollama-data:

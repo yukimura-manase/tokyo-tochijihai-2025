@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# UV
+.venv/
+uv.lock
+
+# Testing
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+chroma_db/
+chroma_evac/
+chroma_pdf/
+chroma_wifi/
+.ollama.pid
+*.log
+
+# Environment files
+.env
+.env.*
+!.env.local
+
+# Temporary files
+tmp/
+temp/

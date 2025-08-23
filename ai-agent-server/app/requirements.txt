@@ -1,0 +1,34 @@
+# FastAPI and related
+fastapi>=0.104.0
+uvicorn>=0.24.0
+pydantic>=2.5.0
+
+# LangChain and AI
+langchain>=0.1.0
+langchain-openai>=0.1.0
+langchain-ollama>=0.1.0
+langchain-core>=0.1.0
+langchain-community
+
+# Embeddings and Vector Store
+chromadb>=0.4.0
+sentence-transformers>=2.2.0
+
+# Data processing
+pandas>=2.1.0
+openpyxl>=3.1.0
+PyPDF2>=3.0.1
+pypdf>=3.17.0
+
+# OpenAI
+openai>=1.3.0
+
+# Text processing
+transformers>=4.35.0
+
+# Utilities
+pathlib2>=2.3.7
+typing-extensions>=4.8.0
+
+# HTTP client for health checks
+httpx>=0.25.0
