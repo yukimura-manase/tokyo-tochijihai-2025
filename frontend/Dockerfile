@@ -10,6 +10,9 @@ RUN pnpm install
 COPY package.json pnpm-lock.yaml* ./
 RUN pnpm install --frozen-lockfile
 
+# アプリケーションコードをコピー
+COPY . .
+
 # フロントエンドのポートを設定
 EXPOSE 3222
 
