@@ -162,9 +162,9 @@ class EvacuationRAG(BaseRAG):
             if doc.metadata.get('is_barrier_free', False):
                 parts.append("   バリアフリー: ○")
             
-            hazards = doc.metadata.get('hazards', [])
+            hazards = doc.metadata.get('hazards', "")
             if hazards:
-                parts.append(f"   対応災害: {', '.join(hazards)}")
+                parts.append(f"   対応災害: {hazards}")
             
             lines.extend(parts)
             lines.append("")  # Empty line between entries
@@ -287,7 +287,7 @@ class EvacuationRAG(BaseRAG):
                 "distance_km": doc.metadata.get("distance_km"),
                 "phone": doc.metadata.get("phone"),
                 "is_barrier_free": doc.metadata.get("is_barrier_free"),
-                "hazards": doc.metadata.get("hazards", [])
+                "hazards": doc.metadata.get("hazards", "")
             }
             sources.append(source)
         

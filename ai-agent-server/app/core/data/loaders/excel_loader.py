@@ -13,21 +13,17 @@ def clean_wifi_columns(df: pd.DataFrame) -> pd.DataFrame:
     # Remove newlines and full-width spaces from column names
     df = df.rename(columns=lambda x: str(x).replace("\n", "").replace("　", " ").strip())
     
-    # Common rename patterns for WiFi spot data
-    # Note: These will be adjusted based on actual column names
+    # WiFi spot data column mapping based on actual file structure
     rename_map = {
-        "区市町村コード": "municipality_code", 
-        "区市町村": "municipality",
-        "施設名": "facility_name",
-        "事業者名": "provider",
-        "設置場所名": "location_name",
-        "設置場所住所": "address",
+        "都道府県コード又は市区町村コード": "municipality_code",
+        "市区町村名": "municipality", 
+        "名称": "facility_name",
+        "設置者": "provider",
+        "住所": "address",
         "緯度": "lat",
         "経度": "lon",
         "SSID": "ssid",
-        "利用可能時間": "available_hours",
-        "利用料金": "fee",
-        "認証方式": "auth_method",
+        "提供エリア": "available_hours",
         "電話番号": "phone",
         "URL": "url",
         "備考": "notes"
@@ -64,27 +60,27 @@ def load_wifi_excel_as_documents(excel_path: str) -> List[Document]:
         lat = record.get("lat", None)
         lon = record.get("lon", None) 
         facility_name = record.get("facility_name", "")
-        location_name = record.get("location_name", "")
+        location_name = facility_name  # Use same as facility_name since there's no separate location name
         municipality = record.get("municipality", "")
         address = record.get("address", "")
         provider = record.get("provider", "")
         ssid = record.get("ssid", "")
         available_hours = record.get("available_hours", "")
-        fee = record.get("fee", "")
-        auth_method = record.get("auth_method", "")
+        fee = "無料"  # Default to free for public WiFi spots
+        auth_method = ""  # Not available in this dataset
         phone = record.get("phone", "")
         url = record.get("url", "")
         notes = record.get("notes", "")
         
         # Skip records without essential information
-        if not facility_name and not location_name:
+        if not facility_name:
             continue
             
         # Determine primary name
-        display_name = facility_name or location_name
+        display_name = facility_name
         
-        # Check if it's free WiFi
-        is_free = False
+        # Check if it's free WiFi (default to True for public WiFi spots)
+        is_free = True  # Assume public WiFi spots are free
         if pd.notna(fee):
             fee_str = str(fee).lower()
             is_free = any(word in fee_str for word in ["無料", "free", "0円", "0 円"])

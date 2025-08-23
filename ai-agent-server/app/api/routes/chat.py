@@ -21,11 +21,7 @@ ollama_llm = OllamaLLM(
 async def generate_stream(prompt: str, temperature: float, max_tokens: int):
     """Generate streaming response."""
     try:
-        for chunk in ollama_llm.stream(
-            prompt,
-            temperature=temperature,
-            max_tokens=max_tokens
-        ):
+        for chunk in ollama_llm.stream(prompt):
             yield f"data: {json.dumps({'chunk': chunk})}\n\n"
     except Exception as e:
         yield f"data: {json.dumps({'error': str(e)})}\n\n"
@@ -35,11 +31,7 @@ async def generate_stream(prompt: str, temperature: float, max_tokens: int):
 async def chat(request: ChatRequest):
     """Basic chat endpoint."""
     try:
-        response = ollama_llm.invoke(
-            request.prompt,
-            temperature=request.temperature,
-            max_tokens=request.max_tokens
-        )
+        response = ollama_llm.invoke(request.prompt)
         return ChatResponse(response=response)
     except Exception as e:
         raise HTTPException(
@@ -75,11 +67,7 @@ async def chat_completions(request: ChatCompletionRequest):
                 media_type="text/event-stream"
             )
         else:
-            response = ollama_llm.invoke(
-                conversation,
-                temperature=request.temperature,
-                max_tokens=request.max_tokens
-            )
+            response = ollama_llm.invoke(conversation)
             return {
                 "id": "chatcmpl-123",
                 "object": "chat.completion",

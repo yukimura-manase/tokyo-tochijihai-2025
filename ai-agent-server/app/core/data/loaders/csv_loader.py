@@ -123,7 +123,7 @@ def load_csv_as_documents(csv_path: str) -> List[Document]:
             "address": address,
             "phone": str(phone) if pd.notna(phone) else "",
             "is_barrier_free": is_barrier_free,
-            "hazards": hazards,
+            "hazards": ", ".join(hazards) if hazards else "",  # Convert list to string
             "source": Path(csv_path).name
         }
         
