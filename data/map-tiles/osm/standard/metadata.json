@@ -1,0 +1,17 @@
+{
+  "source": "OpenStreetMap Standard",
+  "downloadedAt": "2025-08-23T03:47:49.810Z",
+  "totalTiles": 6016,
+  "successfulTiles": 6016,
+  "failedTiles": 0,
+  "boundingBox": {
+    "north": 35.9,
+    "south": 35.5,
+    "east": 139.95,
+    "west": 138.9
+  },
+  "zoomLevels": {
+    "min": 10,
+    "max": 15
+  }
+}

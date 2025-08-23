@@ -10,7 +10,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/shared/ui-elements/sidebar";
-import { RiRobot2Line } from "react-icons/ri";
 import { Link } from "react-router";
 
 // Sidebar Menu items.
@@ -19,11 +18,6 @@ const items = [
     title: "Home",
     url: "/",
     icon: Home,
-  },
-  {
-    title: "ネットワーク",
-    url: "/network",
-    icon: RiRobot2Line,
   },
 ];
 

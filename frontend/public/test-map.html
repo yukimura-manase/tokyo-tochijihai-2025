@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Tile Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .tile-test { margin: 20px 0; }
+        img { border: 1px solid #ccc; margin: 5px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>マップタイル配置テスト</h1>
+    
+    <div class="tile-test">
+        <h2>1. facilities.json の確認</h2>
+        <div id="facilities-status" class="status">確認中...</div>
+    </div>
+    
+    <div class="tile-test">
+        <h2>2. マップタイルの確認</h2>
+        <p>サンプルタイル (z=10, x=907, y=402):</p>
+        <img id="sample-tile" src="/data/map-tiles/gsi/std/10/907/402.png" alt="Sample tile" width="256" height="256">
+        <div id="tile-status" class="status">確認中...</div>
+    </div>
+    
+    <script>
+        // facilities.json の確認
+        fetch('/data/facilities.json')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('facilities-status').className = 'status success';
+                document.getElementById('facilities-status').textContent = `✅ facilities.json が正常に読み込まれました (${data.length}件の施設データ)`;
+            })
+            .catch(error => {
+                document.getElementById('facilities-status').className = 'status error';
+                document.getElementById('facilities-status').textContent = `❌ facilities.json の読み込みエラー: ${error.message}`;
+            });
+        
+        // マップタイルの確認
+        const img = document.getElementById('sample-tile');
+        img.onload = function() {
+            document.getElementById('tile-status').className = 'status success';
+            document.getElementById('tile-status').textContent = '✅ マップタイルが正常に読み込まれました';
+        };
+        img.onerror = function() {
+            document.getElementById('tile-status').className = 'status error';
+            document.getElementById('tile-status').textContent = '❌ マップタイルの読み込みエラー';
+        };
+    </script>
+</body>
+</html>
