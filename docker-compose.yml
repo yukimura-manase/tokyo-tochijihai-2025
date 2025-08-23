@@ -56,6 +56,7 @@ services:
     volumes:
       - ./frontend:/app/frontend
       - /app/frontend/node_modules
+      - ./data/map-tiles:/app/frontend/public/data/map-tiles:ro
     networks:
       - app-network
 
