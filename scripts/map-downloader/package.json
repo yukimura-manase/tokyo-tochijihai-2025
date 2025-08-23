@@ -7,7 +7,11 @@
     "build": "tsc",
     "download:osm": "npm run build && node dist/osm-tiles.js",
     "download:gsi": "npm run build && node dist/gsi-tiles.js",
-    "download:all": "npm run build && node dist/index.js",
+    "download:all": "npm run build && node dist/index.js download-all --area tokyo_all",
+    "download:all-23ku": "npm run build && node dist/index.js download-all --area tokyo_23ku",
+    "download:all-tama": "npm run build && node dist/index.js download-all --area tokyo_tama",
+    "quick-start": "npm run build && node dist/index.js quick-start",
+    "info": "npm run build && node dist/index.js info",
     "dev:osm": "ts-node src/osm-tiles.ts",
     "dev:gsi": "ts-node src/gsi-tiles.ts",
     "dev": "ts-node src/index.ts"
