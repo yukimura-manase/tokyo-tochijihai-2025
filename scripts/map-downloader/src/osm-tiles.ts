@@ -3,7 +3,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import {
   getTilesInBoundingBox,
-  downloadTilesParallel,
+  downloadTilesBatch,
   saveMetadata,
   calculateTileCount,
   calculateDirectorySize,
@@ -69,18 +69,20 @@ async function downloadOSMTiles(
   
   await fs.ensureDir(outputDir);
   
-  const tiles = getTilesInBoundingBox(area.boundingBox, minZoom, maxZoom);
+  const tilesGenerator = getTilesInBoundingBox(area.boundingBox, minZoom, maxZoom);
   
   console.log('\nStarting download...\n');
   const startTime = Date.now();
   
-  const results = await downloadTilesParallel(
-    tiles,
+  const results = await downloadTilesBatch(
+    tilesGenerator,
     source.urlTemplate,
     outputDir,
     concurrency,
+    10000, // batchSize
     source.fileExtension,
-    true
+    true,
+    tileCount
   );
   
   const endTime = Date.now();
@@ -95,7 +97,7 @@ async function downloadOSMTiles(
   console.log(`Duration: ${duration.toFixed(2)} seconds`);
   console.log(`Successful: ${successfulDownloads.toLocaleString()} tiles`);
   console.log(`Failed: ${failedDownloads.toLocaleString()} tiles`);
-  console.log(`Success Rate: ${((successfulDownloads / tiles.length) * 100).toFixed(2)}%`);
+  console.log(`Success Rate: ${((successfulDownloads / results.length) * 100).toFixed(2)}%`);
   
   if (failedDownloads > 0) {
     const failedTilesPath = path.join(outputDir, 'failed_tiles.json');
@@ -113,7 +115,7 @@ async function downloadOSMTiles(
   await saveMetadata(outputDir, {
     source: source.name,
     downloadedAt: new Date(),
-    totalTiles: tiles.length,
+    totalTiles: results.length,
     successfulTiles: successfulDownloads,
     failedTiles: failedDownloads,
     boundingBox: area.boundingBox,
@@ -150,9 +152,9 @@ program
   .description('Download OSM tiles')
   .option('-a, --area <area>', 'Area to download (tokyo_all, tokyo_23ku, tokyo_central, tokyo_tama)', 'tokyo_23ku')
   .option('-s, --source <source>', 'OSM tile source (standard, humanitarian)', 'standard')
-  .option('--min-zoom <number>', 'Minimum zoom level', parseInt, DEFAULT_DOWNLOAD_CONFIG.minZoom)
-  .option('--max-zoom <number>', 'Maximum zoom level', parseInt, DEFAULT_DOWNLOAD_CONFIG.maxZoom)
-  .option('-c, --concurrency <number>', 'Number of concurrent downloads', parseInt, DEFAULT_DOWNLOAD_CONFIG.concurrency)
+  .option('--min-zoom <number>', 'Minimum zoom level', (val) => parseInt(val), DEFAULT_DOWNLOAD_CONFIG.minZoom)
+  .option('--max-zoom <number>', 'Maximum zoom level', (val) => parseInt(val), DEFAULT_DOWNLOAD_CONFIG.maxZoom)
+  .option('-c, --concurrency <number>', 'Number of concurrent downloads', (val) => parseInt(val), DEFAULT_DOWNLOAD_CONFIG.concurrency)
   .action(async (options) => {
     await downloadOSMTiles(
       options.area,

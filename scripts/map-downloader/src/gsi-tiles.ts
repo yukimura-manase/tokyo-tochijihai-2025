@@ -3,7 +3,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import {
   getTilesInBoundingBox,
-  downloadTilesParallel,
+  downloadTilesBatch,
   saveMetadata,
   calculateTileCount,
   calculateDirectorySize,
@@ -73,18 +73,20 @@ async function downloadGSITiles(
   
   await fs.ensureDir(outputDir);
   
-  const tiles = getTilesInBoundingBox(area.boundingBox, minZoom, maxZoom);
+  const tilesGenerator = getTilesInBoundingBox(area.boundingBox, minZoom, maxZoom);
   
   console.log('\nダウンロードを開始しています...\n');
   const startTime = Date.now();
   
-  const results = await downloadTilesParallel(
-    tiles,
+  const results = await downloadTilesBatch(
+    tilesGenerator,
     source.urlTemplate,
     outputDir,
     concurrency,
+    10000, // batchSize
     source.fileExtension,
-    true
+    true,
+    tileCount
   );
   
   const endTime = Date.now();
@@ -99,7 +101,7 @@ async function downloadGSITiles(
   console.log(`所要時間: ${duration.toFixed(2)} 秒`);
   console.log(`成功: ${successfulDownloads.toLocaleString()} タイル`);
   console.log(`失敗: ${failedDownloads.toLocaleString()} タイル`);
-  console.log(`成功率: ${((successfulDownloads / tiles.length) * 100).toFixed(2)}%`);
+  console.log(`成功率: ${((successfulDownloads / results.length) * 100).toFixed(2)}%`);
   
   if (failedDownloads > 0) {
     const failedTilesPath = path.join(outputDir, 'failed_tiles.json');
@@ -117,7 +119,7 @@ async function downloadGSITiles(
   await saveMetadata(outputDir, {
     source: source.name,
     downloadedAt: new Date(),
-    totalTiles: tiles.length,
+    totalTiles: results.length,
     successfulTiles: successfulDownloads,
     failedTiles: failedDownloads,
     boundingBox: area.boundingBox,
@@ -159,9 +161,9 @@ program
   .description('GSIタイルをダウンロード')
   .option('-a, --area <area>', 'ダウンロードエリア (tokyo_all, tokyo_23ku, tokyo_central, tokyo_tama)', 'tokyo_23ku')
   .option('-s, --source <source>', 'GSIタイルソース (std, pale, blank, seamlessphoto, relief, disaster)', 'std')
-  .option('--min-zoom <number>', '最小ズームレベル', parseInt, DEFAULT_DOWNLOAD_CONFIG.minZoom)
-  .option('--max-zoom <number>', '最大ズームレベル', parseInt, DEFAULT_DOWNLOAD_CONFIG.maxZoom)
-  .option('-c, --concurrency <number>', '同時ダウンロード数', parseInt, DEFAULT_DOWNLOAD_CONFIG.concurrency)
+  .option('--min-zoom <number>', '最小ズームレベル', (val) => parseInt(val), DEFAULT_DOWNLOAD_CONFIG.minZoom)
+  .option('--max-zoom <number>', '最大ズームレベル', (val) => parseInt(val), DEFAULT_DOWNLOAD_CONFIG.maxZoom)
+  .option('-c, --concurrency <number>', '同時ダウンロード数', (val) => parseInt(val), DEFAULT_DOWNLOAD_CONFIG.concurrency)
   .action(async (options) => {
     await downloadGSITiles(
       options.area,

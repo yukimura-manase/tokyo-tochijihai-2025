@@ -145,7 +145,7 @@ export interface DownloadConfig {
 
 export const DEFAULT_DOWNLOAD_CONFIG = {
   minZoom: 10,
-  maxZoom: 17,
+  maxZoom: 15,  // より実用的なデフォルト値に変更
   concurrency: 5,
   retryAttempts: 3,
   timeout: 30000

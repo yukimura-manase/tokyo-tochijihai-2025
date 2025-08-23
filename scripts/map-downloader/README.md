@@ -53,7 +53,7 @@ node dist/gsi-tiles.js download --source disaster
 
 ### すべての地図をダウンロード
 
-東京都全域（23区＋多摩地域）の地図をダウンロード:
+東京都全域（23 区＋多摩地域）の地図をダウンロード:
 
 ```bash
 # 東京都全域
@@ -154,7 +154,7 @@ node dist/gsi-tiles.js list-sources
 ## 出力ディレクトリ構造
 
 ```bash
-data/map-tiles/
+data-source/map-tiles/
 ├── osm/
 │   ├── standard/
 │   │   ├── {z}/{x}/{y}.png

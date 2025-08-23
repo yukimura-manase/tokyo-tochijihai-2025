@@ -49,9 +49,7 @@ export function tile2lat(y: number, z: number): number {
   return 180 / Math.PI * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)));
 }
 
-export function getTilesInBoundingBox(bbox: BoundingBox, minZoom: number, maxZoom: number): TileCoordinate[] {
-  const tiles: TileCoordinate[] = [];
-  
+export function* getTilesInBoundingBox(bbox: BoundingBox, minZoom: number, maxZoom: number): Generator<TileCoordinate> {
   for (let z = minZoom; z <= maxZoom; z++) {
     const minX = lon2tile(bbox.west, z);
     const maxX = lon2tile(bbox.east, z);
@@ -60,12 +58,14 @@ export function getTilesInBoundingBox(bbox: BoundingBox, minZoom: number, maxZoo
     
     for (let x = minX; x <= maxX; x++) {
       for (let y = minY; y <= maxY; y++) {
-        tiles.push({ x, y, z });
+        yield { x, y, z };
       }
     }
   }
-  
-  return tiles;
+}
+
+export function getTilesInBoundingBoxArray(bbox: BoundingBox, minZoom: number, maxZoom: number): TileCoordinate[] {
+  return Array.from(getTilesInBoundingBox(bbox, minZoom, maxZoom));
 }
 
 export async function downloadFile(options: DownloadOptions): Promise<boolean> {
@@ -178,21 +178,24 @@ export class ProgressBar {
 }
 
 export async function downloadTilesParallel(
-  tiles: TileCoordinate[],
+  tiles: TileCoordinate[] | Generator<TileCoordinate>,
   urlTemplate: string,
   outputDir: string,
   concurrency: number = 5,
   fileExtension: string = 'png',
-  showProgress: boolean = true
+  showProgress: boolean = true,
+  totalCount?: number
 ): Promise<TileDownloadResult[]> {
   const limit = pLimit(concurrency);
-  const progressBar = showProgress ? new ProgressBar(tiles.length) : null;
+  const tilesArray = Array.isArray(tiles) ? tiles : Array.from(tiles);
+  const total = totalCount || tilesArray.length;
+  const progressBar = showProgress ? new ProgressBar(total) : null;
   
   if (progressBar) {
     progressBar.start();
   }
   
-  const promises = tiles.map(tile =>
+  const promises = tilesArray.map(tile =>
     limit(async () => {
       const result = await downloadTile(tile, urlTemplate, outputDir, fileExtension);
       if (progressBar) {
@@ -209,6 +212,84 @@ export async function downloadTilesParallel(
   }
   
   return results;
+}
+
+export async function downloadTilesBatch(
+  tilesGenerator: Generator<TileCoordinate>,
+  urlTemplate: string,
+  outputDir: string,
+  concurrency: number = 5,
+  batchSize: number = 10000,
+  fileExtension: string = 'png',
+  showProgress: boolean = true,
+  totalCount?: number
+): Promise<TileDownloadResult[]> {
+  const allResults: TileDownloadResult[] = [];
+  const progressBar = showProgress && totalCount ? new ProgressBar(totalCount) : null;
+  
+  if (progressBar) {
+    progressBar.start();
+  }
+  
+  let batch: TileCoordinate[] = [];
+  let batchNumber = 0;
+  
+  for (const tile of tilesGenerator) {
+    batch.push(tile);
+    
+    if (batch.length >= batchSize) {
+      batchNumber++;
+      if (!progressBar) {
+        console.log(`Processing batch ${batchNumber} (${batch.length} tiles)...`);
+      }
+      
+      const limit = pLimit(concurrency);
+      const promises = batch.map(t =>
+        limit(async () => {
+          const result = await downloadTile(t, urlTemplate, outputDir, fileExtension);
+          if (progressBar) {
+            progressBar.increment();
+          }
+          return result;
+        })
+      );
+      
+      const results = await Promise.all(promises);
+      allResults.push(...results);
+      batch = [];
+      
+      // Give memory a chance to be garbage collected
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+  }
+  
+  // Process remaining tiles
+  if (batch.length > 0) {
+    batchNumber++;
+    if (!progressBar) {
+      console.log(`Processing final batch ${batchNumber} (${batch.length} tiles)...`);
+    }
+    
+    const limit = pLimit(concurrency);
+    const promises = batch.map(t =>
+      limit(async () => {
+        const result = await downloadTile(t, urlTemplate, outputDir, fileExtension);
+        if (progressBar) {
+          progressBar.increment();
+        }
+        return result;
+      })
+    );
+    
+    const results = await Promise.all(promises);
+    allResults.push(...results);
+  }
+  
+  if (progressBar) {
+    progressBar.stop();
+  }
+  
+  return allResults;
 }
 
 export async function saveMetadata(
