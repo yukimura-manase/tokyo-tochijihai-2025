@@ -52,8 +52,8 @@ export const FacilityList = ({
       [FacilityType.HYDRANT]: `bg-[#D54F4F]/10 text-[#D54F4F]`,
       [FacilityType.WATER_SUPPLY]: `bg-[#32ACCA]/10 text-[#32ACCA]`,
       [FacilityType.WIFI]: `bg-[#8964CB]/10 text-[#8964CB]`,
-      [FacilityType.EVACUATION]: `bg-[#E59024]/10 text-[#E59024]`,
-      [FacilityType.SHELTER]: `bg-[#12A364]/10 text-[#12A364]`,
+      [FacilityType.EVACUATION]: `bg-[#12A364]/10 text-[#12A364]`,
+      [FacilityType.SHELTER]: `bg-[#E59024]/10 text-[#E59024]`,
     };
     return colors[type] || "bg-gray-100 text-gray-800";
   };

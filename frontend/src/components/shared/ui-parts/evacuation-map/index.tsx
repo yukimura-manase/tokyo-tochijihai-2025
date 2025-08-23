@@ -29,33 +29,31 @@ L.Icon.Default.mergeOptions({
 });
 
 /**
+ * 施設タイプごとのアイコンファイルパスを取得
+ */
+const getFacilityIconPath = (type: FacilityType): string => {
+  const iconPaths = {
+    [FacilityType.HYDRANT]: "/icon/ピン=消化器.svg",
+    [FacilityType.WATER_SUPPLY]: "/icon/ピン=給水所.svg",
+    [FacilityType.WIFI]: "/icon/ピン=Wi-Fi.svg",
+    [FacilityType.EVACUATION]: "/icon/ピン=避難所.svg",
+    [FacilityType.SHELTER]: "/icon/ピン=緊急(一時)避難.svg",
+  };
+  return iconPaths[type] || "/icon/ピン=避難所.svg";
+};
+
+/**
  * 施設タイプごとのアイコンを作成
  */
-const createFacilityIcon = (type: FacilityType): L.DivIcon => {
-  const iconColors = {
-    [FacilityType.HYDRANT]: "#dc2626", // 赤
-    [FacilityType.WATER_SUPPLY]: "#2563eb", // 青
-    [FacilityType.WIFI]: "#16a34a", // 緑
-    [FacilityType.EVACUATION]: "#ea580c", // オレンジ
-    [FacilityType.SHELTER]: "#7c3aed", // 紫
-  };
+const createFacilityIcon = (type: FacilityType): L.Icon => {
+  const iconPath = getFacilityIconPath(type);
 
-  const color = iconColors[type] || "#6b7280";
-
-  const svgIcon = `
-    <svg width="25" height="41" viewBox="0 0 25 41" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12.5 0C5.6 0 0 5.6 0 12.5C0 21.9 12.5 41 12.5 41S25 21.9 25 12.5C25 5.6 19.4 0 12.5 0Z"
-            fill="${color}" stroke="white" stroke-width="1"/>
-      <circle cx="12.5" cy="12.5" r="5" fill="white"/>
-    </svg>
-  `;
-
-  return L.divIcon({
-    html: svgIcon,
-    iconSize: [25, 41],
-    iconAnchor: [12.5, 41],
-    popupAnchor: [0, -41],
-    className: "custom-div-icon",
+  return L.icon({
+    iconUrl: iconPath,
+    iconSize: [40, 40],
+    iconAnchor: [20, 40],
+    popupAnchor: [0, -40],
+    className: "facility-icon",
   });
 };
 
@@ -106,36 +104,30 @@ const currentLocationIcon = L.divIcon({
 });
 
 /**
+ * 登録地点タイプごとのアイコンファイルパスを取得
+ */
+const getLocationIconPath = (type: LocationType): string => {
+  const iconPaths = {
+    [LocationType.HOME]: "/icon/ピン=自宅.svg",
+    [LocationType.OFFICE]: "/icon/ピン=会社.svg",
+    [LocationType.CURRENT]: "/icon/ピン=緊急(一時)避難.svg", // 現在地用のデフォルト
+    [LocationType.LAST_ONLINE]: "/icon/ピン=緊急(一時)避難.svg", // 最終オンライン地点用のデフォルト
+  };
+  return iconPaths[type] || "/icon/ピン=自宅.svg";
+};
+
+/**
  * 登録地点用のアイコンを作成
  */
-const createLocationIcon = (type: LocationType): L.DivIcon => {
-  const iconSymbols = {
-    [LocationType.HOME]: "🏠",
-    [LocationType.OFFICE]: "🏢",
-    [LocationType.CURRENT]: "📍",
-    [LocationType.LAST_ONLINE]: "📡",
-  };
+const createLocationIcon = (type: LocationType): L.Icon => {
+  const iconPath = getLocationIconPath(type);
 
-  const symbol = iconSymbols[type] || "📍";
-
-  const svgIcon = `
-    <svg width="30" height="45" viewBox="0 0 30 45" xmlns="http://www.w3.org/2000/svg">
-      <path d="M15 0C6.7 0 0 6.7 0 15C0 26.25 15 45 15 45S30 26.25 30 15C30 6.7 23.3 0 15 0Z"
-            fill="#059669" stroke="white" stroke-width="1.5"/>
-      <foreignObject x="7" y="5" width="16" height="16">
-        <div xmlns="http://www.w3.org/1999/xhtml" style="font-size: 14px; text-align: center;">
-          ${symbol}
-        </div>
-      </foreignObject>
-    </svg>
-  `;
-
-  return L.divIcon({
-    html: svgIcon,
-    iconSize: [30, 45],
-    iconAnchor: [15, 45],
-    popupAnchor: [0, -45],
-    className: "location-div-icon",
+  return L.icon({
+    iconUrl: iconPath,
+    iconSize: [40, 40],
+    iconAnchor: [20, 40],
+    popupAnchor: [0, -40],
+    className: "location-icon",
   });
 };
 

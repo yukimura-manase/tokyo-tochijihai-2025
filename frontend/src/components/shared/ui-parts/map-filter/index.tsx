@@ -32,12 +32,12 @@ export const MapFilter = () => {
     {
       type: "showEvacuationSites",
       label: "避難場所",
-      color: `bg-[#E59024]`,
+      color: `bg-[#12A364]`,
     },
     {
       type: "showShelters",
       label: "一時滞在施設",
-      color: `bg-[#12A364]`,
+      color: `bg-[#E59024]`,
     },
   ];
 
