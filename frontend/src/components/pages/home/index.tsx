@@ -49,7 +49,7 @@ export const HomePage = () => {
         </button>
 
         {/* 施設リスト */}
-        {showList && <FacilityList />}
+        <FacilityList isOpen={showList} onOpenChange={setShowList} />
       </section>
     </BasicLayout>
   );
