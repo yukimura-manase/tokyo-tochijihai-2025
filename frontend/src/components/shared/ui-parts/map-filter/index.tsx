@@ -1,7 +1,6 @@
 import { useAtom } from "jotai";
 import { mapSettingsAtom } from "@/stores/map";
 import { MapSettings } from "@/types/facility";
-
 interface FilterOption {
   type: keyof MapSettings;
   label: string;
@@ -18,27 +17,27 @@ export const MapFilter = () => {
     {
       type: "showHydrants",
       label: "消火栓",
-      color: "bg-red-500",
+      color: `bg-[#D54F4F]`,
     },
     {
       type: "showWaterSupplies",
       label: "給水拠点",
-      color: "bg-blue-500",
+      color: `bg-[#32ACCA]`,
     },
     {
       type: "showWiFiSpots",
       label: "無料WiFi",
-      color: "bg-green-500",
+      color: `bg-[#8964CB]`,
     },
     {
       type: "showEvacuationSites",
       label: "避難場所",
-      color: "bg-orange-500",
+      color: `bg-[#E59024]`,
     },
     {
       type: "showShelters",
       label: "一時滞在施設",
-      color: "bg-purple-500",
+      color: `bg-[#12A364]`,
     },
   ];
 

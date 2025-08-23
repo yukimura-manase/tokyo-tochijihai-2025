@@ -1,22 +1,13 @@
-import { useState } from "react";
 import { BasicLayout } from "@/components/layouts/basic-layout";
 import { EvacuationMap } from "@/components/shared/ui-parts/evacuation-map";
 import { MapFilter } from "@/components/shared/ui-parts/map-filter";
-import { FacilityList } from "@/components/shared/ui-parts/facility-list";
 import { LocationRegister } from "@/components/shared/ui-parts/location-register";
 import { EvacuationGuide } from "@/components/shared/ui-parts/evacuation-guide";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@/components/shared/ui-elements/tooltip";
 
 /**
  * エントリーポイントとなる Top Page
  */
 export const HomePage = () => {
-  const [showList, setShowList] = useState(false);
-
   return (
     <BasicLayout>
       <section className="w-full h-full relative">
@@ -33,7 +24,7 @@ export const HomePage = () => {
         <EvacuationGuide />
 
         {/* 施設リストボタン */}
-        <Tooltip>
+        {/* <Tooltip>
           <TooltipTrigger asChild>
             <button
               onClick={() => setShowList(!showList)}
@@ -58,10 +49,10 @@ export const HomePage = () => {
           <TooltipContent>
             <p>近くの施設一覧を表示</p>
           </TooltipContent>
-        </Tooltip>
+        </Tooltip> */}
 
         {/* 施設リスト */}
-        <FacilityList isOpen={showList} onOpenChange={setShowList} />
+        {/* <FacilityList isOpen={showList} onOpenChange={setShowList} /> */}
       </section>
     </BasicLayout>
   );
