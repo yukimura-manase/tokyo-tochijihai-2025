@@ -1,0 +1,68 @@
+version: "3.8"
+services:
+  # DB設定
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      PGPASSWORD: password
+      POSTGRES_DB: testdb
+      DATABASE_HOST: localhost
+    # ポートフォワーディング
+    ports:
+      # ホストマシン:コンテナ
+      - "8777:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  # Hono Server (System 全体を管理する Server)
+  server:
+    build:
+      context: ./server
+    ports:
+      # ホストマシンPort:コンテナPort
+      - "3777:3777"
+    depends_on:
+      - db
+    env_file:
+      - ./server/.env
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@db:5432/testdb
+      - NODE_ENV=development
+      - FRONT_APP_URL=http://localhost:3222
+    volumes:
+      - ./server:/app/server
+      - /app/server/node_modules
+    networks:
+      - app-network
+
+  # Frontend (React Vite App)
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      # ホストマシンPort:コンテナPort
+      - "3222:3222"
+    depends_on:
+      - server
+    env_file:
+      - ./frontend/.env
+    environment:
+      - VITE_SERVER_URL=http://localhost:3777
+      - NODE_ENV=development
+    volumes:
+      - ./frontend:/app/frontend
+      - /app/frontend/node_modules
+    networks:
+      - app-network
+
+volumes:
+  pgdata:
+
+networks:
+  app-network:
+    driver: bridge
