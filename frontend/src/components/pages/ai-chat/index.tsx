@@ -71,7 +71,7 @@ export const EmergencyChatPage = () => {
   return (
     <div>
       {/* Header */}
-      <div className="flex justify-between items-center px-6 py-4 bg-white border-b border-gray-100">
+      <div className="flex justify-between items-center px-6 py-4 mb-3 bg-white border-b border-gray-100">
         <Button
           variant="ghost"
           className="flex items-center gap-2 p-0 h-auto text-gray-600"
@@ -83,18 +83,6 @@ export const EmergencyChatPage = () => {
           <span>マップに戻る</span>
         </Button>
         <span className="text-gray-500 text-sm">ステータスなし</span>
-      </div>
-
-      {/* Chat Bot Avatar */}
-      <div className="relative px-6 pt-6 pb-4 bg-white">
-        <div className="absolute right-6 top-4">
-          <Avatar className="w-12 h-12 border-2 border-blue-500">
-            <AvatarImage src="/friendly-chat-bot-avatar.png" />
-            <AvatarFallback className="bg-blue-500 text-white">
-              🤖
-            </AvatarFallback>
-          </Avatar>
-        </div>
       </div>
 
       {/* Main Content */}
@@ -161,7 +149,9 @@ export const EmergencyChatPage = () => {
                       <span className="text-xs font-medium">防災AI</span>
                     </div>
                   )}
-                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                  <p className="text-sm whitespace-pre-wrap">
+                    {message.content}
+                  </p>
                   <p
                     className={`text-xs mt-1 ${
                       message.role === "user"
