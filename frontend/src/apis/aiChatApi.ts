@@ -1,66 +1,48 @@
-import { SERVER_URL } from "@/constants/env";
+import { AI_AGENT_SERVER_URL } from "@/constants/env";
 
-export class UserApi {
+/** チャットリクエストの型定義 */
+export interface ChatRequest {
+  prompt: string;
+  temperature?: number;
+  max_tokens?: number;
+  stream?: boolean;
+}
+
+/** チャットレスポンスの型定義 */
+export interface ChatResponse {
+  response: string;
+  model: string;
+}
+
+export class AiChatApi {
   private constructor() {}
 
   /**
-   * Google認証情報を検証する
-   * @param email メールアドレス
-   * @returns ユーザーが存在するかどうか
+   * AIチャットを送信する
+   * @param message メッセージ
+   * @returns AIからの応答
    */
-  static async verifyGoogleAuth(email: string) {
-    const response = await fetch(`${SERVER_URL}/api/users/verify-google-auth`, {
+  static async sendMessage(message: string): Promise<ChatResponse> {
+    const request: ChatRequest = {
+      prompt: message,
+      temperature: 0.7,
+      max_tokens: 1000,
+      stream: false,
+    };
+
+    const response = await fetch(`${AI_AGENT_SERVER_URL}/api/chat`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify(request),
     });
 
     if (!response.ok) {
-      throw new Error("Failed to verify Google auth");
+      const errorText = await response.text();
+      throw new Error(`Failed to send message: ${errorText}`);
     }
 
-    return response.json();
-  }
-
-  /**
-   * ユーザーを新規登録する
-   * @param userData ユーザー情報
-   * @returns 登録されたユーザー情報
-   */
-  static async registerUser(userData: {
-    email: string;
-    name: string;
-    googleId: string;
-  }) {
-    const response = await fetch(`${SERVER_URL}/api/users`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userData),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to register user");
-    }
-
-    return response.json();
-  }
-
-  /**
-   * ユーザー情報を取得する
-   * @param userId ユーザーID
-   * @returns ユーザー情報
-   */
-  static async getUser(userId: string) {
-    const response = await fetch(`${SERVER_URL}/api/users/${userId}`);
-
-    if (!response.ok) {
-      throw new Error("Failed to get user");
-    }
-
-    return response.json();
+    return response.json() as Promise<ChatResponse>;
   }
 }
