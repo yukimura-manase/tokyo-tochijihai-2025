@@ -6,6 +6,7 @@ import { SearchBox } from "@/components/shared/ui-parts/search-box";
 import { LocationRegister } from "@/components/shared/ui-parts/location-register";
 import { EvacuationGuide } from "@/components/shared/ui-parts/evacuation-guide";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { AiChatSideBtn } from "@/components/shared/ui-elements/ai-caht-btn";
 
 /**
  * エントリーポイントとなる Top Page
@@ -33,6 +34,11 @@ export const HomePage = () => {
 
         {/* 避難所案内 */}
         <EvacuationGuide />
+
+        {/* AIチャットボタン */}
+        <div className="absolute top-[330px] right-0 z-[1001] transform -translate-y-1/2">
+          <AiChatSideBtn />
+        </div>
       </section>
     </BasicLayout>
   );

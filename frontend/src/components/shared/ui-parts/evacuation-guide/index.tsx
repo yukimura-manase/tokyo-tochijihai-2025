@@ -211,7 +211,7 @@ export const EvacuationGuide = () => {
         className={
           isMobile
             ? "h-[60vh] w-full overflow-y-auto rounded-t-lg p-2"
-            : "w-[400px] md:w-[540px] overflow-y-auto"
+            : "w-[400px] md:w-[540px] overflow-y-auto p-2"
         }
       >
         <SheetHeader className={isMobile ? "pb-2" : ""}>
