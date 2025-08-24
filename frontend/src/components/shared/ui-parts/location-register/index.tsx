@@ -95,7 +95,7 @@ export const LocationRegister = () => {
         type: formData.type as LocationType,
         name:
           formData.name ||
-          (formData.type === LocationType.HOME ? "自宅" : "会社"),
+          (formData.type === LocationType.HOME ? "自宅" : "会社/学校"),
         latitude,
         longitude,
         address: formData.address,
@@ -143,7 +143,7 @@ export const LocationRegister = () => {
   const getLocationTypeName = (type: LocationType): string => {
     const typeNames = {
       [LocationType.HOME]: "自宅",
-      [LocationType.OFFICE]: "会社",
+      [LocationType.OFFICE]: "会社/学校",
       [LocationType.CURRENT]: "現在地",
       [LocationType.LAST_ONLINE]: "最終オンライン地点",
     };
@@ -208,7 +208,7 @@ export const LocationRegister = () => {
                 }
                 className="flex-1"
               >
-                会社
+                会社/学校
               </Button>
             </div>
           </div>
@@ -222,7 +222,7 @@ export const LocationRegister = () => {
               id="name"
               type="text"
               placeholder={
-                formData.type === LocationType.HOME ? "自宅" : "会社"
+                formData.type === LocationType.HOME ? "自宅" : "会社/学校"
               }
               value={formData.name}
               onChange={(e) =>
