@@ -1,3 +1,4 @@
+import { EmergencyChatPage } from "@/components/pages/ai-chat";
 import HomePage from "@/pages/home";
 import NotFoundPage from "@/pages/not-found";
 import { BrowserRouter, Route, Routes } from "react-router";
@@ -11,6 +12,9 @@ export const AppRouter = () => {
       <Routes>
         {/* ホームページ */}
         <Route path="/" element={<HomePage />} />
+
+        {/* AIチャットページ */}
+        <Route path="/ai-chat" element={<EmergencyChatPage />} />
 
         {/* 404ページ - 存在しないパスに対応 */}
         <Route path="*" element={<NotFoundPage />} />
