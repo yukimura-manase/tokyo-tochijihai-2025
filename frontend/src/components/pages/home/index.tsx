@@ -29,7 +29,7 @@ export const HomePage = () => {
         {isMobile && <MobileMapFilter />}
 
         {/* 地点登録: 自宅/会社の地点を登録する */}
-        {!isMobile && <LocationRegister />}
+        <LocationRegister />
 
         {/* 避難所案内 */}
         {!isMobile && <EvacuationGuide />}

@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/shared/ui-elements/dialog";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 /**
  * 地点登録コンポーネント
@@ -150,12 +151,17 @@ export const LocationRegister = () => {
     return typeNames[type] || "地点";
   };
 
+  const isMobile = useIsMobile();
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <button
           className="absolute top-20 right-4 z-[1001] bg-white rounded-lg shadow-lg p-3 hover:bg-gray-100 transition-colors"
           aria-label="地点を登録"
+          style={{
+            top: isMobile ? "150px" : "80px",
+          }}
         >
           <svg
             className="w-6 h-6 text-gray-700"
