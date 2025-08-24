@@ -32,7 +32,7 @@ export const HomePage = () => {
         <LocationRegister />
 
         {/* 避難所案内 */}
-        {!isMobile && <EvacuationGuide />}
+        <EvacuationGuide />
       </section>
     </BasicLayout>
   );

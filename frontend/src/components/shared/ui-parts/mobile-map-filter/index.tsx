@@ -11,8 +11,8 @@ import {
   WifiOnIcon,
   WaterSupplyOffIcon,
   WaterSupplyOnIcon,
-  FireExtinguisherOffIcon,
-  FireExtinguisherOnIcon,
+  // FireExtinguisherOffIcon,
+  // FireExtinguisherOnIcon,
 } from "@/components/shared/ui-elements/icons";
 
 interface FilterOption {
@@ -84,13 +84,13 @@ export const MobileMapFilter = () => {
   // ポータルでbodyに直接レンダリング
   return createPortal(
     <div
-      className="fixed z-[9999]"
+      className="fixed z-[999]"
       style={{
         position: "fixed",
         top: "80px", // SearchBoxの下に配置
         left: "0",
         right: "0",
-        zIndex: 9999,
+        zIndex: 999,
         padding: "0 16px",
       }}
     >

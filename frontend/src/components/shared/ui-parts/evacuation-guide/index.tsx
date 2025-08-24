@@ -22,6 +22,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/shared/ui-elements/tooltip";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 /**
  * 避難所案内コンポーネント
@@ -134,6 +135,24 @@ export const EvacuationGuide = () => {
     return `${distance.toFixed(1)}km`;
   };
 
+  // 歩いた時にかかる時間を計算
+  const calculateWalkingTime = (distance: number): string => {
+    const walkingSpeed = 5; // 歩行速度（km/h）
+    const timeInHours = distance / walkingSpeed;
+    const timeInMinutes = timeInHours * 60;
+
+    if (timeInMinutes < 60) {
+      return `徒歩約${Math.round(timeInMinutes)}分`;
+    } else {
+      const hours = Math.floor(timeInMinutes / 60);
+      const minutes = Math.round(timeInMinutes % 60);
+      if (minutes === 0) {
+        return `徒歩約${hours}時間`;
+      }
+      return `徒歩約${hours}時間${minutes}分`;
+    }
+  };
+
   // 施設をクリックした時の処理
   const handleNavigate = (facility: any) => {
     setMapView({
@@ -152,6 +171,8 @@ export const EvacuationGuide = () => {
     (loc) => loc.type === LocationType.OFFICE
   );
 
+  const isMobile = useIsMobile();
+
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <Tooltip>
@@ -160,6 +181,9 @@ export const EvacuationGuide = () => {
             <button
               className="absolute top-36 right-4 z-[1001] bg-blue-500 text-white rounded-lg shadow-lg p-3 hover:bg-blue-600 transition-colors"
               aria-label="避難所案内"
+              style={{
+                top: isMobile ? "222px" : "144px",
+              }}
             >
               <svg
                 className="w-6 h-6"
@@ -184,7 +208,7 @@ export const EvacuationGuide = () => {
 
       <SheetContent
         side="right"
-        className="w-[400px] sm:w-[540px] overflow-y-auto"
+        className="w-full sm:w-[400px] md:w-[540px] overflow-y-auto"
       >
         <SheetHeader>
           <SheetTitle>最寄りの避難施設案内</SheetTitle>
@@ -197,7 +221,7 @@ export const EvacuationGuide = () => {
           {/* 出発地点選択 */}
           <div>
             <label className="block text-sm font-medium mb-2">出発地点</label>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <Button
                 type="button"
                 variant={
@@ -205,7 +229,7 @@ export const EvacuationGuide = () => {
                 }
                 onClick={() => setSelectedStartPoint("current")}
                 disabled={!currentPosition}
-                className="flex-1"
+                className="flex-1 text-sm"
               >
                 現在地
               </Button>
@@ -214,7 +238,7 @@ export const EvacuationGuide = () => {
                 variant={selectedStartPoint === "home" ? "default" : "outline"}
                 onClick={() => setSelectedStartPoint("home")}
                 disabled={!homeLocation}
-                className="flex-1"
+                className="flex-1 text-sm"
               >
                 自宅
               </Button>
@@ -225,7 +249,7 @@ export const EvacuationGuide = () => {
                 }
                 onClick={() => setSelectedStartPoint("office")}
                 disabled={!officeLocation}
-                className="flex-1"
+                className="flex-1 text-sm"
               >
                 会社
               </Button>
@@ -272,21 +296,27 @@ export const EvacuationGuide = () => {
                       className="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
                       onClick={() => handleNavigate(facility)}
                     >
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <h4 className="font-medium text-sm">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-medium text-sm break-words">
                             {facility.name}
                           </h4>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-xs bg-gray-100 px-2 py-1 rounded">
-                              {getFacilityTypeName(facility.type)}
-                            </span>
-                            <span className="text-xs text-blue-600 font-medium">
-                              {direction}へ約{formatDistance(facility.distance)}
+                          <div className="flex flex-col gap-1 mt-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="text-xs bg-gray-100 px-2 py-1 rounded whitespace-nowrap">
+                                {getFacilityTypeName(facility.type)}
+                              </span>
+                              <span className="text-xs text-blue-600 font-medium whitespace-nowrap">
+                                {direction}へ約
+                                {formatDistance(facility.distance)}
+                              </span>
+                            </div>
+                            <span className="text-xs text-green-600 font-medium">
+                              {calculateWalkingTime(facility.distance)}
                             </span>
                           </div>
                           {facility.address && (
-                            <p className="text-xs text-gray-600 mt-1">
+                            <p className="text-xs text-gray-600 mt-1 break-words">
                               {facility.address}
                             </p>
                           )}
@@ -294,7 +324,7 @@ export const EvacuationGuide = () => {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <button
-                              className="ml-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                              className="self-start sm:ml-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex-shrink-0"
                               aria-label="マップで表示"
                             >
                               <svg
