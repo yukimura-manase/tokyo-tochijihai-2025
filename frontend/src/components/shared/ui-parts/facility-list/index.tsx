@@ -49,11 +49,11 @@ export const FacilityList = ({
   // 施設タイプごとの色を取得
   const getFacilityColor = (type: FacilityType): string => {
     const colors = {
-      [FacilityType.HYDRANT]: "bg-red-100 text-red-800",
-      [FacilityType.WATER_SUPPLY]: "bg-blue-100 text-blue-800",
-      [FacilityType.WIFI]: "bg-green-100 text-green-800",
-      [FacilityType.EVACUATION]: "bg-orange-100 text-orange-800",
-      [FacilityType.SHELTER]: "bg-purple-100 text-purple-800",
+      [FacilityType.HYDRANT]: `bg-[#D54F4F]/10 text-[#D54F4F]`,
+      [FacilityType.WATER_SUPPLY]: `bg-[#32ACCA]/10 text-[#32ACCA]`,
+      [FacilityType.WIFI]: `bg-[#8964CB]/10 text-[#8964CB]`,
+      [FacilityType.EVACUATION]: `bg-[#12A364]/10 text-[#12A364]`,
+      [FacilityType.SHELTER]: `bg-[#E59024]/10 text-[#E59024]`,
     };
     return colors[type] || "bg-gray-100 text-gray-800";
   };

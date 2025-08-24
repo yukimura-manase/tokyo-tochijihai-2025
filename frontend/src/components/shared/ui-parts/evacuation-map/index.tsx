@@ -18,6 +18,8 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/shared/ui-elements/tooltip";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { MobileBtnArea } from "../mobile-btn-area";
 
 // Leafletのデフォルトアイコンの問題を修正
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -29,33 +31,31 @@ L.Icon.Default.mergeOptions({
 });
 
 /**
+ * 施設タイプごとのアイコンファイルパスを取得
+ */
+const getFacilityIconPath = (type: FacilityType): string => {
+  const iconPaths = {
+    [FacilityType.HYDRANT]: "/icon/ピン=消化器.svg",
+    [FacilityType.WATER_SUPPLY]: "/icon/ピン=給水所.svg",
+    [FacilityType.WIFI]: "/icon/ピン=Wi-Fi.svg",
+    [FacilityType.EVACUATION]: "/icon/ピン=避難所.svg",
+    [FacilityType.SHELTER]: "/icon/ピン=緊急(一時)避難.svg",
+  };
+  return iconPaths[type] || "/icon/ピン=避難所.svg";
+};
+
+/**
  * 施設タイプごとのアイコンを作成
  */
-const createFacilityIcon = (type: FacilityType): L.DivIcon => {
-  const iconColors = {
-    [FacilityType.HYDRANT]: "#dc2626", // 赤
-    [FacilityType.WATER_SUPPLY]: "#2563eb", // 青
-    [FacilityType.WIFI]: "#16a34a", // 緑
-    [FacilityType.EVACUATION]: "#ea580c", // オレンジ
-    [FacilityType.SHELTER]: "#7c3aed", // 紫
-  };
+const createFacilityIcon = (type: FacilityType): L.Icon => {
+  const iconPath = getFacilityIconPath(type);
 
-  const color = iconColors[type] || "#6b7280";
-
-  const svgIcon = `
-    <svg width="25" height="41" viewBox="0 0 25 41" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12.5 0C5.6 0 0 5.6 0 12.5C0 21.9 12.5 41 12.5 41S25 21.9 25 12.5C25 5.6 19.4 0 12.5 0Z"
-            fill="${color}" stroke="white" stroke-width="1"/>
-      <circle cx="12.5" cy="12.5" r="5" fill="white"/>
-    </svg>
-  `;
-
-  return L.divIcon({
-    html: svgIcon,
-    iconSize: [25, 41],
-    iconAnchor: [12.5, 41],
-    popupAnchor: [0, -41],
-    className: "custom-div-icon",
+  return L.icon({
+    iconUrl: iconPath,
+    iconSize: [40, 40],
+    iconAnchor: [20, 40],
+    popupAnchor: [0, -40],
+    className: "facility-icon",
   });
 };
 
@@ -106,36 +106,30 @@ const currentLocationIcon = L.divIcon({
 });
 
 /**
+ * 登録地点タイプごとのアイコンファイルパスを取得
+ */
+const getLocationIconPath = (type: LocationType): string => {
+  const iconPaths = {
+    [LocationType.HOME]: "/icon/ピン=自宅.svg",
+    [LocationType.OFFICE]: "/icon/ピン=会社.svg",
+    [LocationType.CURRENT]: "/icon/ピン=緊急(一時)避難.svg", // 現在地用のデフォルト
+    [LocationType.LAST_ONLINE]: "/icon/ピン=緊急(一時)避難.svg", // 最終オンライン地点用のデフォルト
+  };
+  return iconPaths[type] || "/icon/ピン=自宅.svg";
+};
+
+/**
  * 登録地点用のアイコンを作成
  */
-const createLocationIcon = (type: LocationType): L.DivIcon => {
-  const iconSymbols = {
-    [LocationType.HOME]: "🏠",
-    [LocationType.OFFICE]: "🏢",
-    [LocationType.CURRENT]: "📍",
-    [LocationType.LAST_ONLINE]: "📡",
-  };
+const createLocationIcon = (type: LocationType): L.Icon => {
+  const iconPath = getLocationIconPath(type);
 
-  const symbol = iconSymbols[type] || "📍";
-
-  const svgIcon = `
-    <svg width="30" height="45" viewBox="0 0 30 45" xmlns="http://www.w3.org/2000/svg">
-      <path d="M15 0C6.7 0 0 6.7 0 15C0 26.25 15 45 15 45S30 26.25 30 15C30 6.7 23.3 0 15 0Z"
-            fill="#059669" stroke="white" stroke-width="1.5"/>
-      <foreignObject x="7" y="5" width="16" height="16">
-        <div xmlns="http://www.w3.org/1999/xhtml" style="font-size: 14px; text-align: center;">
-          ${symbol}
-        </div>
-      </foreignObject>
-    </svg>
-  `;
-
-  return L.divIcon({
-    html: svgIcon,
-    iconSize: [30, 45],
-    iconAnchor: [15, 45],
-    popupAnchor: [0, -45],
-    className: "location-div-icon",
+  return L.icon({
+    iconUrl: iconPath,
+    iconSize: [40, 40],
+    iconAnchor: [20, 40],
+    popupAnchor: [0, -40],
+    className: "location-icon",
   });
 };
 
@@ -327,6 +321,8 @@ export const EvacuationMap = () => {
     return typeNames[type] || "施設";
   };
 
+  const isMobile = useIsMobile();
+
   return (
     <div className="w-full h-full relative" style={{ minHeight: "850px" }}>
       <MapContainer
@@ -468,42 +464,90 @@ export const EvacuationMap = () => {
         ))}
       </MapContainer>
 
-      {/* 現在地取得ボタン */}
-      <div className="absolute bottom-4 right-4 z-[1001] flex flex-col gap-2">
-        {/* 現在地に移動ボタン */}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              onClick={handleGetCurrentLocation}
-              disabled={isGettingLocation}
-              className={`p-3 rounded-full shadow-lg transition-colors ${
-                isGettingLocation
-                  ? "bg-gray-400 text-white cursor-not-allowed"
-                  : "bg-blue-500 text-white hover:bg-blue-600"
-              }`}
-              aria-label="現在地を取得"
-            >
-              {isGettingLocation ? (
-                <svg
-                  className="w-6 h-6 animate-spin"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
+      {/* Mobile版: 現在地/自宅/職場ボタンのエリア */}
+      {isMobile && <MobileBtnArea />}
+
+      {/* Desktop版: 現在地/自宅/職場ボタンのエリア */}
+      {!isMobile && (
+        // {/* 現在地取得ボタン */}
+        <div className="absolute bottom-4 right-4 z-[1001] flex flex-col gap-2">
+          {/* 現在地に移動ボタン */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={handleGetCurrentLocation}
+                disabled={isGettingLocation}
+                className={`p-3 rounded-full shadow-lg transition-colors ${
+                  isGettingLocation
+                    ? "bg-gray-400 text-white cursor-not-allowed"
+                    : "bg-blue-500 text-white hover:bg-blue-600"
+                }`}
+                aria-label="現在地を取得"
+              >
+                {isGettingLocation ? (
+                  <svg
+                    className="w-6 h-6 animate-spin"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
                     stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-              ) : (
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                )}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>
+                {isGettingLocation
+                  ? "位置情報を取得中..."
+                  : "現在地を取得してマップを移動"}
+              </p>
+            </TooltipContent>
+          </Tooltip>
+
+          {/* 位置情報追跡ボタン */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => setIsTracking(!isTracking)}
+                className={`p-3 rounded-full shadow-lg transition-colors ${
+                  isTracking
+                    ? "bg-green-500 text-white"
+                    : "bg-white text-gray-700 hover:bg-gray-100"
+                }`}
+                aria-label={isTracking ? "位置追跡を停止" : "位置追跡を開始"}
+              >
                 <svg
                   className="w-6 h-6"
                   fill="none"
@@ -514,65 +558,25 @@ export const EvacuationMap = () => {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
                   />
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    d="M12 11.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"
                   />
                 </svg>
-              )}
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>
-              {isGettingLocation
-                ? "位置情報を取得中..."
-                : "現在地を取得してマップを移動"}
-            </p>
-          </TooltipContent>
-        </Tooltip>
-
-        {/* 位置情報追跡ボタン */}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => setIsTracking(!isTracking)}
-              className={`p-3 rounded-full shadow-lg transition-colors ${
-                isTracking
-                  ? "bg-green-500 text-white"
-                  : "bg-white text-gray-700 hover:bg-gray-100"
-              }`}
-              aria-label={isTracking ? "位置追跡を停止" : "位置追跡を開始"}
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 11.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"
-                />
-              </svg>
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>{isTracking ? "位置追跡を停止" : "リアルタイムで位置を追跡"}</p>
-          </TooltipContent>
-        </Tooltip>
-      </div>
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>
+                {isTracking ? "位置追跡を停止" : "リアルタイムで位置を追跡"}
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      )}
     </div>
   );
 };

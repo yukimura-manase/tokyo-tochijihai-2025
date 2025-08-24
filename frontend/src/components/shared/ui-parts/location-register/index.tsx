@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/shared/ui-elements/dialog";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 /**
  * 地点登録コンポーネント
@@ -95,7 +96,7 @@ export const LocationRegister = () => {
         type: formData.type as LocationType,
         name:
           formData.name ||
-          (formData.type === LocationType.HOME ? "自宅" : "会社"),
+          (formData.type === LocationType.HOME ? "自宅" : "会社/学校"),
         latitude,
         longitude,
         address: formData.address,
@@ -143,12 +144,14 @@ export const LocationRegister = () => {
   const getLocationTypeName = (type: LocationType): string => {
     const typeNames = {
       [LocationType.HOME]: "自宅",
-      [LocationType.OFFICE]: "会社",
+      [LocationType.OFFICE]: "会社/学校",
       [LocationType.CURRENT]: "現在地",
       [LocationType.LAST_ONLINE]: "最終オンライン地点",
     };
     return typeNames[type] || "地点";
   };
+
+  const isMobile = useIsMobile();
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -156,6 +159,9 @@ export const LocationRegister = () => {
         <button
           className="absolute top-20 right-4 z-[1001] bg-white rounded-lg shadow-lg p-3 hover:bg-gray-100 transition-colors"
           aria-label="地点を登録"
+          style={{
+            top: isMobile ? "150px" : "80px",
+          }}
         >
           <svg
             className="w-6 h-6 text-gray-700"
@@ -208,7 +214,7 @@ export const LocationRegister = () => {
                 }
                 className="flex-1"
               >
-                会社
+                会社/学校
               </Button>
             </div>
           </div>
@@ -222,7 +228,7 @@ export const LocationRegister = () => {
               id="name"
               type="text"
               placeholder={
-                formData.type === LocationType.HOME ? "自宅" : "会社"
+                formData.type === LocationType.HOME ? "自宅" : "会社/学校"
               }
               value={formData.name}
               onChange={(e) =>
