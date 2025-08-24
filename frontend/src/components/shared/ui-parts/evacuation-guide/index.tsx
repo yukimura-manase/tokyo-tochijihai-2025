@@ -207,21 +207,34 @@ export const EvacuationGuide = () => {
       </Tooltip>
 
       <SheetContent
-        side="right"
-        className="w-full sm:w-[400px] md:w-[540px] overflow-y-auto"
+        side={isMobile ? "bottom" : "right"}
+        className={
+          isMobile
+            ? "h-[60vh] w-full overflow-y-auto rounded-t-lg p-2"
+            : "w-[400px] md:w-[540px] overflow-y-auto"
+        }
       >
-        <SheetHeader>
-          <SheetTitle>最寄りの避難施設案内</SheetTitle>
-          <SheetDescription>
+        <SheetHeader className={isMobile ? "pb-2" : ""}>
+          {isMobile && (
+            <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-4" />
+          )}
+          <SheetTitle className={isMobile ? "text-lg" : ""}>
+            最寄りの避難施設案内
+          </SheetTitle>
+          <SheetDescription className={isMobile ? "text-sm" : ""}>
             選択した地点から最寄りの施設への案内を表示します
           </SheetDescription>
         </SheetHeader>
 
-        <div className="mt-6 space-y-4">
+        <div className={`${isMobile ? "mt-4" : "mt-6"} space-y-4`}>
           {/* 出発地点選択 */}
           <div>
             <label className="block text-sm font-medium mb-2">出発地点</label>
-            <div className="flex flex-col sm:flex-row gap-2">
+            <div
+              className={`flex ${
+                isMobile ? "flex-row" : "flex-col sm:flex-row"
+              } gap-2`}
+            >
               <Button
                 type="button"
                 variant={
@@ -229,7 +242,9 @@ export const EvacuationGuide = () => {
                 }
                 onClick={() => setSelectedStartPoint("current")}
                 disabled={!currentPosition}
-                className="flex-1 text-sm"
+                className={`flex-1 ${
+                  isMobile ? "text-xs px-2 py-1" : "text-sm"
+                }`}
               >
                 現在地
               </Button>
@@ -238,7 +253,9 @@ export const EvacuationGuide = () => {
                 variant={selectedStartPoint === "home" ? "default" : "outline"}
                 onClick={() => setSelectedStartPoint("home")}
                 disabled={!homeLocation}
-                className="flex-1 text-sm"
+                className={`flex-1 ${
+                  isMobile ? "text-xs px-2 py-1" : "text-sm"
+                }`}
               >
                 自宅
               </Button>
@@ -249,7 +266,9 @@ export const EvacuationGuide = () => {
                 }
                 onClick={() => setSelectedStartPoint("office")}
                 disabled={!officeLocation}
-                className="flex-1 text-sm"
+                className={`flex-1 ${
+                  isMobile ? "text-xs px-2 py-1" : "text-sm"
+                }`}
               >
                 会社
               </Button>
@@ -264,7 +283,9 @@ export const EvacuationGuide = () => {
               onChange={(e) =>
                 setSelectedFacilityType(e.target.value as FacilityType | "all")
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                isMobile ? "px-2 py-1 text-sm" : "px-3 py-2"
+              }`}
             >
               <option value="all">すべて</option>
               <option value={FacilityType.SHELTER}>都立一時滞在施設</option>
@@ -293,7 +314,9 @@ export const EvacuationGuide = () => {
                   return (
                     <div
                       key={facility.id}
-                      className="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                      className={`border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors ${
+                        isMobile ? "p-2" : "p-3"
+                      }`}
                       onClick={() => handleNavigate(facility)}
                     >
                       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
