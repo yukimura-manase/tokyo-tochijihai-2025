@@ -30,7 +30,7 @@ export class AiChatApi {
       stream: false,
     };
 
-    const response = await fetch(`${AI_AGENT_SERVER_URL}/api/chat`, {
+    const response = await fetch(`${AI_AGENT_SERVER_URL}/chat`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
